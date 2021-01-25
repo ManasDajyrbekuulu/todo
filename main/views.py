@@ -1,12 +1,47 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
+from .models import ToDo
 
-# Create your views here.
+
 def homepage(request):
-    return HttpResponse("Hello world")
+    return render(request, "index.html")
 
 
 def test(request):
-    return render(request, "test.html")
+    todo_list = ToDo.objekts.all(test)
+    return render(request, "test.html", {"todo_list" : todo_list})
 
-def third(request):
-    return HttpResponse("test 3 page")
+
+def second(request):
+    return HttpResponse("test 2 page")
+
+
+def book(request):
+    return render(request, "books.html")
+
+
+def add_todo(request):
+    form = request.POST
+    text = form["todo_text"]
+    todo = ToDo(text=text)
+    todo.save()
+    return redirect(test)
+
+
+def delete_todo(request, id):
+    todo = ToDo.objects.get(id=id)
+    todo.delete()
+    return redirect(test)
+
+
+def mark_todo(request, id):
+    todo = ToDo.objects.get(id=id)
+    todo.is_favorite = True
+    todo.save()
+    return redirect(test)
+
+
+def close_todo(request, id):
+    todo = ToDo.objects.get(id=id)
+    todo.is_closed = not todo.is_closed
+    todo.save()
+    return redirect(test)
